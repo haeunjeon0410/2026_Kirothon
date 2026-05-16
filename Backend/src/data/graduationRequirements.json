@@ -1,0 +1,263 @@
+{
+  "경영학부": {
+    "departmentName": "경영학부",
+    "tracks": {
+      "singleMajor": {
+        "label": "단일전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 42, "description": "Core major courses required for graduation" },
+          "majorElective": { "label": "전공선택", "credits": 48, "description": "Major elective courses" },
+          "generalRequired": { "label": "교양필수", "credits": 21, "description": "General education required courses" },
+          "generalElective": { "label": "교양선택", "credits": 9, "description": "General education elective courses" },
+          "freeElective": { "label": "자유선택", "credits": 10, "description": "Free elective credits" }
+        },
+        "mandatoryCourses": [],
+        "notes": "Standard 4-year single major track"
+      },
+      "doubleMajor": {
+        "label": "복수전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 27, "description": "Core major courses (reduced for double major)" },
+          "majorElective": { "label": "전공선택", "credits": 42, "description": "Major elective courses" },
+          "secondMajor": { "label": "제2전공", "credits": 36, "description": "Second major courses" },
+          "generalRequired": { "label": "교양필수", "credits": 15, "description": "General education required" },
+          "generalElective": { "label": "교양선택", "credits": 6, "description": "General education elective" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "Free elective credits" }
+        },
+        "mandatoryCourses": [],
+        "notes": "Double major requires 36 credits in second major department"
+      },
+      "minor": {
+        "label": "부전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 42, "description": "Core major courses" },
+          "majorElective": { "label": "전공선택", "credits": 48, "description": "Major elective courses" },
+          "minorCredits": { "label": "부전공", "credits": 21, "description": "Minor department courses" },
+          "generalRequired": { "label": "교양필수", "credits": 12, "description": "General education required" },
+          "generalElective": { "label": "교양선택", "credits": 3, "description": "General education elective" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "Free elective credits" }
+        },
+        "mandatoryCourses": [],
+        "notes": "Minor requires 21 credits in minor department"
+      },
+      "advancedMajor": {
+        "label": "심화전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 42, "description": "Core major courses" },
+          "majorElective": { "label": "전공선택", "credits": 60, "description": "Extended major elective courses (심화)" },
+          "generalRequired": { "label": "교양필수", "credits": 18, "description": "General education required" },
+          "generalElective": { "label": "교양선택", "credits": 6, "description": "General education elective" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "Free elective credits" }
+        },
+        "mandatoryCourses": [],
+        "notes": "Advanced major requires deeper specialization with 60 elective credits"
+      },
+      "linkedMajor": {
+        "label": "연계전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 42, "description": "Core major courses" },
+          "majorElective": { "label": "전공선택", "credits": 36, "description": "Major elective courses" },
+          "linkedCredits": { "label": "연계전공", "credits": 36, "description": "Interdisciplinary linked major courses" },
+          "generalRequired": { "label": "교양필수", "credits": 12, "description": "General education required" },
+          "generalElective": { "label": "교양선택", "credits": 0, "description": "General education elective" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "Free elective credits" }
+        },
+        "mandatoryCourses": [],
+        "notes": "Linked/interdisciplinary major combines courses from multiple departments"
+      }
+    },
+    "categoryMapping": {
+      "전공필수": "majorRequired",
+      "전공선택": "majorElective",
+      "교양필수": "generalRequired",
+      "교양선택": "generalElective",
+      "자유선택": "freeElective",
+      "제2전공": "secondMajor",
+      "부전공": "minorCredits",
+      "연계전공": "linkedCredits"
+    },
+    "semesterCreditsMax": 18,
+    "semesterCreditsMin": 12,
+    "standardSemesters": 8,
+    "maxSemesters": 12
+  },
+  "경제학부": {
+    "departmentName": "경제학부",
+    "tracks": {
+      "singleMajor": {
+        "label": "단일전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 36, "description": "경제학 전공필수 과목" },
+          "majorElective": { "label": "전공선택", "credits": 54, "description": "경제학 전공선택 과목" },
+          "generalRequired": { "label": "교양필수", "credits": 21, "description": "교양필수 과목" },
+          "generalElective": { "label": "교양선택", "credits": 9, "description": "교양선택 과목" },
+          "freeElective": { "label": "자유선택", "credits": 10, "description": "자유선택 학점" }
+        },
+        "mandatoryCourses": ["경제학원론1", "경제학원론2", "미시경제학", "거시경제학", "경제수학", "계량경제학"],
+        "notes": "경제학부 단일전공. 경제학원론1·2, 미시경제학, 거시경제학, 경제수학, 계량경제학 필수 이수"
+      },
+      "doubleMajor": {
+        "label": "복수전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 24, "description": "경제학 전공필수 (복수전공 축소)" },
+          "majorElective": { "label": "전공선택", "credits": 39, "description": "경제학 전공선택" },
+          "secondMajor": { "label": "제2전공", "credits": 36, "description": "제2전공 이수 학점" },
+          "generalRequired": { "label": "교양필수", "credits": 18, "description": "교양필수 과목" },
+          "generalElective": { "label": "교양선택", "credits": 9, "description": "교양선택 과목" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "자유선택 학점" }
+        },
+        "mandatoryCourses": ["경제학원론1", "경제학원론2", "미시경제학", "거시경제학"],
+        "notes": "복수전공 시 경제학원론1·2, 미시·거시경제학 필수. 제2전공 36학점 이수 필요"
+      },
+      "minor": {
+        "label": "부전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 36, "description": "경제학 전공필수" },
+          "majorElective": { "label": "전공선택", "credits": 54, "description": "경제학 전공선택" },
+          "minorCredits": { "label": "부전공", "credits": 21, "description": "부전공 이수 학점" },
+          "generalRequired": { "label": "교양필수", "credits": 12, "description": "교양필수 과목" },
+          "generalElective": { "label": "교양선택", "credits": 3, "description": "교양선택 과목" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "자유선택 학점" }
+        },
+        "mandatoryCourses": ["경제학원론1", "경제학원론2", "미시경제학", "거시경제학", "경제수학", "계량경제학"],
+        "notes": "부전공 21학점 이수 필요"
+      },
+      "advancedMajor": {
+        "label": "심화전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 36, "description": "경제학 전공필수" },
+          "majorElective": { "label": "전공선택", "credits": 66, "description": "경제학 심화 전공선택 (확대)" },
+          "generalRequired": { "label": "교양필수", "credits": 18, "description": "교양필수 과목" },
+          "generalElective": { "label": "교양선택", "credits": 6, "description": "교양선택 과목" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "자유선택 학점" }
+        },
+        "mandatoryCourses": ["경제학원론1", "경제학원론2", "미시경제학", "거시경제학", "경제수학", "계량경제학"],
+        "notes": "심화전공은 전공선택 66학점으로 깊은 전문성 요구"
+      },
+      "linkedMajor": {
+        "label": "연계전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 36, "description": "경제학 전공필수" },
+          "majorElective": { "label": "전공선택", "credits": 36, "description": "경제학 전공선택" },
+          "linkedCredits": { "label": "연계전공", "credits": 36, "description": "연계전공 이수 학점" },
+          "generalRequired": { "label": "교양필수", "credits": 15, "description": "교양필수 과목" },
+          "generalElective": { "label": "교양선택", "credits": 3, "description": "교양선택 과목" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "자유선택 학점" }
+        },
+        "mandatoryCourses": ["경제학원론1", "경제학원론2", "미시경제학", "거시경제학"],
+        "notes": "연계전공은 타 학과와 융합 과목 36학점 이수"
+      }
+    },
+    "categoryMapping": {
+      "전공필수": "majorRequired",
+      "전공선택": "majorElective",
+      "교양필수": "generalRequired",
+      "교양선택": "generalElective",
+      "자유선택": "freeElective",
+      "제2전공": "secondMajor",
+      "부전공": "minorCredits",
+      "연계전공": "linkedCredits"
+    },
+    "semesterCreditsMax": 18,
+    "semesterCreditsMin": 12,
+    "standardSemesters": 8,
+    "maxSemesters": 12
+  },
+  "소비자경제학과": {
+    "departmentName": "소비자경제학과",
+    "tracks": {
+      "singleMajor": {
+        "label": "단일전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 33, "description": "소비자경제학 전공필수 과목" },
+          "majorElective": { "label": "전공선택", "credits": 57, "description": "소비자경제학 전공선택 과목" },
+          "generalRequired": { "label": "교양필수", "credits": 21, "description": "교양필수 과목" },
+          "generalElective": { "label": "교양선택", "credits": 9, "description": "교양선택 과목" },
+          "freeElective": { "label": "자유선택", "credits": 10, "description": "자유선택 학점" }
+        },
+        "mandatoryCourses": ["소비자학개론", "소비자경제학", "소비자정보론", "소비자재무설계", "소비자법과정책"],
+        "notes": "소비자경제학과 단일전공. 소비자학개론, 소비자경제학, 소비자정보론, 소비자재무설계, 소비자법과정책 필수"
+      },
+      "doubleMajor": {
+        "label": "복수전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 21, "description": "소비자경제학 전공필수 (복수전공 축소)" },
+          "majorElective": { "label": "전공선택", "credits": 42, "description": "소비자경제학 전공선택" },
+          "secondMajor": { "label": "제2전공", "credits": 36, "description": "제2전공 이수 학점" },
+          "generalRequired": { "label": "교양필수", "credits": 18, "description": "교양필수 과목" },
+          "generalElective": { "label": "교양선택", "credits": 9, "description": "교양선택 과목" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "자유선택 학점" }
+        },
+        "mandatoryCourses": ["소비자학개론", "소비자경제학", "소비자재무설계"],
+        "notes": "복수전공 시 소비자학개론, 소비자경제학, 소비자재무설계 필수. 제2전공 36학점 이수"
+      },
+      "minor": {
+        "label": "부전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 33, "description": "소비자경제학 전공필수" },
+          "majorElective": { "label": "전공선택", "credits": 57, "description": "소비자경제학 전공선택" },
+          "minorCredits": { "label": "부전공", "credits": 21, "description": "부전공 이수 학점" },
+          "generalRequired": { "label": "교양필수", "credits": 12, "description": "교양필수 과목" },
+          "generalElective": { "label": "교양선택", "credits": 3, "description": "교양선택 과목" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "자유선택 학점" }
+        },
+        "mandatoryCourses": ["소비자학개론", "소비자경제학", "소비자정보론", "소비자재무설계", "소비자법과정책"],
+        "notes": "부전공 21학점 이수 필요"
+      },
+      "advancedMajor": {
+        "label": "심화전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 33, "description": "소비자경제학 전공필수" },
+          "majorElective": { "label": "전공선택", "credits": 69, "description": "소비자경제학 심화 전공선택 (확대)" },
+          "generalRequired": { "label": "교양필수", "credits": 18, "description": "교양필수 과목" },
+          "generalElective": { "label": "교양선택", "credits": 6, "description": "교양선택 과목" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "자유선택 학점" }
+        },
+        "mandatoryCourses": ["소비자학개론", "소비자경제학", "소비자정보론", "소비자재무설계", "소비자법과정책"],
+        "notes": "심화전공은 전공선택 69학점으로 깊은 전문성 요구"
+      },
+      "linkedMajor": {
+        "label": "연계전공",
+        "totalCredits": 130,
+        "categories": {
+          "majorRequired": { "label": "전공필수", "credits": 33, "description": "소비자경제학 전공필수" },
+          "majorElective": { "label": "전공선택", "credits": 36, "description": "소비자경제학 전공선택" },
+          "linkedCredits": { "label": "연계전공", "credits": 36, "description": "연계전공 이수 학점" },
+          "generalRequired": { "label": "교양필수", "credits": 15, "description": "교양필수 과목" },
+          "generalElective": { "label": "교양선택", "credits": 6, "description": "교양선택 과목" },
+          "freeElective": { "label": "자유선택", "credits": 4, "description": "자유선택 학점" }
+        },
+        "mandatoryCourses": ["소비자학개론", "소비자경제학", "소비자재무설계"],
+        "notes": "연계전공은 타 학과와 융합 과목 36학점 이수"
+      }
+    },
+    "categoryMapping": {
+      "전공필수": "majorRequired",
+      "전공선택": "majorElective",
+      "교양필수": "generalRequired",
+      "교양선택": "generalElective",
+      "자유선택": "freeElective",
+      "제2전공": "secondMajor",
+      "부전공": "minorCredits",
+      "연계전공": "linkedCredits"
+    },
+    "semesterCreditsMax": 18,
+    "semesterCreditsMin": 12,
+    "standardSemesters": 8,
+    "maxSemesters": 12
+  }
+}

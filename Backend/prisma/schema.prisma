@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Core User ───────────────────────────────────────────────────────────────
+
+model User {
+  id        String   @id @default(uuid())
+  studentId String   @unique
+  name      String
+  major     String
+  year      Int
+  careerGoals String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  completedCourses CompletedCourse[]
+  roadmaps         Roadmap[]
+  timetables       Timetable[]
+  agentSessions    AgentSession[]
+  academicProfile  UserAcademicProfile?
+  savedRoadmaps    SavedRoadmap[]
+  savedTimetables  SavedTimetable[]
+}
+
+// ─── User Academic Profile (persistent planning state) ───────────────────────
+
+model UserAcademicProfile {
+  id                  String   @id @default(uuid())
+  userId              String   @unique
+  mainMajor           String
+  doubleMajor         String?
+  minor               String?
+  linkedMajor         String?
+  advancedMajor       String?
+  track               String   @default("singleMajor") // singleMajor, doubleMajor, minor, advancedMajor, linkedMajor
+  currentSemester     Int      @default(1) // 1-based semester number (e.g. 3 = 2nd year 1st semester)
+  currentYear         Int      @default(1)
+  careerGoals         String[]
+  completedCourseNames String[]
+  timetablePreferences Json?   // { preferredFreeDays, avoidMorningClasses, etc. }
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Saved Roadmap (generated plans) ─────────────────────────────────────────
+
+model SavedRoadmap {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String   @default("Generated Roadmap")
+  department  String
+  track       String
+  semesters   Json     // full roadmap.semesters array
+  metadata    Json?    // graduation status, risks, career match info
+  isLatest    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isLatest])
+}
+
+// ─── Saved Timetable (generated schedules) ───────────────────────────────────
+
+model SavedTimetable {
+  id                    String   @id @default(uuid())
+  userId                String
+  semester              Int      // semester number this timetable is for
+  department            String
+  schedule              Json     // full timetable schedule (grouped by day)
+  preferences           Json?    // preferences used to generate this timetable
+  timetableScore        Int?     // optimization score (0-100)
+  satisfiedPreferences  Json?    // array of satisfied preference details
+  violatedPreferences   Json?    // array of violated preference details
+  optimizationReasoning String?
+  isLatest              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isLatest])
+}
+
+// ─── Legacy Models (kept for backward compatibility) ─────────────────────────
+
+model Course {
+  id            String   @id @default(uuid())
+  courseCode    String   @unique
+  name         String
+  credits      Int
+  major        String
+  category     String
+  semester     String?
+  prerequisites String[]
+  corequisites  String[]
+  description  String?
+  createdAt    DateTime @default(now())
+
+  completedBy    CompletedCourse[]
+  timetableSlots TimetableSlot[]
+}
+
+model CompletedCourse {
+  id       String @id @default(uuid())
+  userId   String
+  courseId  String
+  grade    String?
+  semester String
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+model GraduationRequirement {
+  id              String @id @default(uuid())
+  major           String
+  category        String
+  requiredCredits Int
+  requiredCourses String[]
+  description     String?
+
+  @@unique([major, category])
+}
+
+model Roadmap {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  semesters Json
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Timetable {
+  id        String   @id @default(uuid())
+  userId    String
+  semester  String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  user  User            @relation(fields: [userId], references: [id])
+  slots TimetableSlot[]
+}
+
+model TimetableSlot {
+  id          String @id @default(uuid())
+  timetableId String
+  courseId     String
+  day         String
+  startTime   String
+  endTime     String
+  location    String?
+
+  timetable Timetable @relation(fields: [timetableId], references: [id])
+  course    Course    @relation(fields: [courseId], references: [id])
+}
+
+model AgentSession {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String
+  status    String   @default("pending")
+  input     Json
+  steps     Json[]
+  output    Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
