@@ -23,9 +23,8 @@ model User {
   roadmaps         Roadmap[]
   timetables       Timetable[]
   agentSessions    AgentSession[]
-  academicProfile  UserAcademicProfile?
-  savedRoadmaps    SavedRoadmap[]
-  savedTimetables  SavedTimetable[]
+  // NOTE: UserAcademicProfile / SavedRoadmap / SavedTimetable 은 더 이상 User FK 를 따르지 않음.
+  // 우리 서비스는 User 테이블 없이 이메일을 userId 로 직접 사용하므로 back-reference 를 제거했다.
 }
 
 // ─── User Academic Profile (persistent planning state) ───────────────────────
@@ -46,8 +45,6 @@ model UserAcademicProfile {
   timetablePreferences Json?   // { preferredFreeDays, avoidMorningClasses, etc. }
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // ─── Saved Roadmap (generated plans) ─────────────────────────────────────────
@@ -63,8 +60,6 @@ model SavedRoadmap {
   isLatest    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, isLatest])
 }
@@ -84,8 +79,6 @@ model SavedTimetable {
   optimizationReasoning String?
   isLatest              Boolean  @default(true)
   createdAt             DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, isLatest])
 }

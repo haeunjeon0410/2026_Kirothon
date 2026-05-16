@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>쑥맵</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap');
+*{font-family:"Noto Sans KR",sans-serif;box-sizing:border-box;margin:0;padding:0;}
+body{background:#F4F6FA;overflow:hidden;width:100vw;height:100vh;}
+.screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.55s ease;}
+.screen.active{opacity:1;pointer-events:all;}
+#dashboard{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.55s ease;display:flex;flex-direction:column;overflow:hidden;background:#F4F6FA;}
+#dashboard.active{opacity:1;pointer-events:all;}
+input,select{outline:none;font-family:inherit;transition:border-color 0.2s,box-shadow 0.2s;}
+input:focus,select:focus{border-color:#3B82F6!important;box-shadow:0 0 0 3px rgba(59,130,246,0.1);}
+button{cursor:pointer;font-family:inherit;}
+.btn-blue{background:#3B82F6;color:#fff;border:none;border-radius:12px;font-weight:600;font-size:15px;transition:all 0.2s;}
+.btn-blue:hover{background:#2563EB;transform:translateY(-1px);box-shadow:0 6px 18px rgba(59,130,246,0.32);}
+.card{background:#fff;border:1px solid #E8EEF8;border-radius:16px;box-shadow:0 1px 4px rgba(0,0,0,0.04);}
+.spin{animation:spin 0.9s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.fade-up{animation:fadeUp 0.5s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+/* Dropdown panels */
+.panel{position:absolute;top:44px;right:0;background:#fff;border:1px solid #E8EEF8;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.10);opacity:0;pointer-events:none;transform:translateY(-6px);transition:all 0.22s ease;z-index:200;}
+.panel.open{opacity:1;pointer-events:all;transform:translateY(0);}
+
+/* Modal overlay */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s;z-index:500;backdrop-filter:blur(2px);}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{background:#fff;border-radius:22px;box-shadow:0 16px 48px rgba(0,0,0,0.14);transform:translateY(12px);transition:transform 0.3s;width:440px;max-height:92vh;overflow-y:auto;}
+.modal-overlay.open .modal-box{transform:translateY(0);}
+
+::-webkit-scrollbar{width:0;}
+</style>
+</head>
+<body>
+
+<!-- ① INTRO -->
+<div id="intro" class="screen active" style="background:#fff;">
+  <div style="text-align:center;max-width:420px;" class="fade-up">
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:40px;">
+      <div style="width:34px;height:34px;background:#3B82F6;border-radius:9px;display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <span style="font-size:20px;font-weight:800;color:#111;letter-spacing:-0.4px;">쑥맵</span>
+    </div>
+    <h1 style="font-size:44px;font-weight:800;color:#111;line-height:1.2;letter-spacing:-1.5px;margin-bottom:16px;">졸업까지<br><span style="color:#3B82F6;">나만의 길</span>을 찾아요</h1>
+    <p style="font-size:15px;color:#9CA3AF;line-height:1.8;margin-bottom:52px;">AI가 학점이수표를 분석해<br>최적의 수강 로드맵을 설계해드려요</p>
+    <button onclick="showScreen('basic-info')" class="btn-blue" style="width:300px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:15px;margin:0 auto 14px;">
+      시작하기
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <p style="font-size:11px;color:#D1D5DB;">숙명여대 재학생을 위한 수강 설계 플랫폼</p>
+  </div>
+</div>
+
+<!-- ② BASIC INFO -->
+<div id="basic-info" class="screen" style="background:#F4F6FA;">
+  <div style="width:420px;height:520px;background:#fff;border-radius:24px;padding:36px;border:1px solid #E8EEF8;box-shadow:0 4px 24px rgba(59,130,246,0.07);display:flex;flex-direction:column;" class="fade-up">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:30px;flex-shrink:0;">
+      <button onclick="showScreen('intro')" style="background:none;border:none;color:#9CA3AF;font-size:13px;display:flex;align-items:center;gap:5px;padding:0;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> 뒤로</button>
+      <div style="display:flex;gap:5px;">
+        <div style="width:20px;height:3px;border-radius:3px;background:#3B82F6;"></div>
+        <div style="width:20px;height:3px;border-radius:3px;background:#E5E7EB;"></div>
+        <div style="width:20px;height:3px;border-radius:3px;background:#E5E7EB;"></div>
+        <div style="width:20px;height:3px;border-radius:3px;background:#E5E7EB;"></div>
+      </div>
+    </div>
+    <h2 style="font-weight:800;font-size:20px;color:#111;margin-bottom:4px;flex-shrink:0;">기본 정보</h2>
+    <p style="font-size:12px;color:#9CA3AF;margin-bottom:24px;flex-shrink:0;">졸업 분석에 필요한 정보예요</p>
+    <div style="flex:1;display:flex;flex-direction:column;gap:16px;overflow:hidden;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#9CA3AF;display:block;margin-bottom:7px;letter-spacing:0.05em;">학과</label>
+        <select id="sel-major" style="width:100%;height:44px;border:1.5px solid #E5E7EB;border-radius:11px;padding:0 12px;font-size:13px;color:#111;background:#fff;">
+          <option value="">학과를 선택하세요</option>
+          <option>컴퓨터과학전공</option><option>소프트웨어학부</option><option>데이터사이언스학부</option><option>IT공학전공</option>
+          <option>수학과</option><option>통계학과</option><option>물리학과</option><option>화학과</option><option>생명시스템학부</option>
+          <option>기계시스템학부</option><option>전자공학전공</option><option>화공생명공학부</option>
+          <option>한국어문학부</option><option>역사문화학과</option><option>철학과</option><option>영어영문학부</option>
+          <option>독일언어·문화학과</option><option>프랑스언어·문화학과</option><option>중어중문학부</option><option>일본학과</option>
+          <option>정치외교학과</option><option>행정학과</option><option>홍보광고학과</option><option>경제학부</option>
+          <option>소비자경제학과</option><option>사회심리학과</option><option>경영학부</option><option>회계학과</option>
+          <option>앙트레프레너십전공</option><option>피아노과</option><option>관현악과</option><option>성악과</option>
+          <option>작곡과</option><option>공예학과</option><option>회화과</option><option>시각디자인학과</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#9CA3AF;display:block;margin-bottom:7px;letter-spacing:0.05em;">학번</label>
+        <input id="inp-sid" type="text" placeholder="예) 2022" style="width:100%;height:44px;border:1.5px solid #E5E7EB;border-radius:11px;padding:0 12px;font-size:13px;color:#111;"/>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#9CA3AF;display:block;margin-bottom:7px;letter-spacing:0.05em;">학년</label>
+        <div style="display:flex;gap:7px;">
+          <button class="grade-btn" onclick="selectGrade(this)" style="flex:1;height:40px;border-radius:10px;font-size:13px;font-weight:600;background:#3B82F6;color:#fff;border:none;">1학년</button>
+          <button class="grade-btn" onclick="selectGrade(this)" style="flex:1;height:40px;border-radius:10px;font-size:13px;font-weight:600;background:#fff;color:#9CA3AF;border:1.5px solid #E5E7EB;">2학년</button>
+          <button class="grade-btn" onclick="selectGrade(this)" style="flex:1;height:40px;border-radius:10px;font-size:13px;font-weight:600;background:#fff;color:#9CA3AF;border:1.5px solid #E5E7EB;">3학년</button>
+          <button class="grade-btn" onclick="selectGrade(this)" style="flex:1;height:40px;border-radius:10px;font-size:13px;font-weight:600;background:#fff;color:#9CA3AF;border:1.5px solid #E5E7EB;">4학년</button>
+        </div>
+      </div>
+    </div>
+    <button onclick="showScreen('upload')" class="btn-blue" style="width:100%;height:48px;margin-top:24px;flex-shrink:0;">다음</button>
+  </div>
+</div>
+
+<!-- ③ UPLOAD -->
+<div id="upload" class="screen" style="background:#F4F6FA;">
+  <div style="width:420px;height:520px;background:#fff;border-radius:24px;padding:36px;border:1px solid #E8EEF8;box-shadow:0 4px 24px rgba(59,130,246,0.07);display:flex;flex-direction:column;" class="fade-up">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:30px;flex-shrink:0;">
+      <button onclick="showScreen('basic-info')" style="background:none;border:none;color:#9CA3AF;font-size:13px;display:flex;align-items:center;gap:5px;padding:0;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> 뒤로</button>
+      <div style="display:flex;gap:5px;">
+        <div style="width:20px;height:3px;border-radius:3px;background:#3B82F6;"></div>
+        <div style="width:20px;height:3px;border-radius:3px;background:#3B82F6;"></div>
+        <div style="width:20px;height:3px;border-radius:3px;background:#E5E7EB;"></div>
+        <div style="width:20px;height:3px;border-radius:3px;background:#E5E7EB;"></div>
+      </div>
+    </div>
+    <h2 style="font-weight:800;font-size:20px;color:#111;margin-bottom:4px;flex-shrink:0;">학점이수표 업로드</h2>
+    <p style="font-size:12px;color:#9CA3AF;margin-bottom:20px;flex-shrink:0;">스노우보드에서 PDF로 저장 후 업로드해 주세요</p>
+    <div id="upload-zone" onclick="document.getElementById('file-input').click()" style="border:1.5px dashed #BFDBFE;border-radius:14px;padding:0 20px;text-align:center;cursor:pointer;transition:all 0.2s;background:#F8FAFF;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;" onmouseover="if(!fileUploaded){this.style.borderColor='#3B82F6';this.style.background='#EFF6FF';}" onmouseout="if(!fileUploaded){this.style.borderColor='#BFDBFE';this.style.background='#F8FAFF';}">
+      <div id="upload-icon" style="width:44px;height:44px;border-radius:50%;background:#DBEAFE;display:flex;align-items:center;justify-content:center;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </div>
+      <div id="upload-text"><div style="font-size:13px;font-weight:600;color:#3B82F6;margin-bottom:3px;">파일을 드래그하거나 클릭</div><div style="font-size:11px;color:#9CA3AF;">PDF · Excel · 최대 10MB</div></div>
+    </div>
+    <input type="file" id="file-input" accept=".pdf,.xlsx,.xls" style="display:none;" onchange="handleFile(this)"/>
+    <div style="padding:12px 14px;background:#EFF6FF;border-radius:10px;margin-top:14px;display:flex;gap:9px;align-items:flex-start;flex-shrink:0;">
+      <span style="font-size:13px;flex-shrink:0;">💡</span>
+      <p style="font-size:11px;color:#4B73B8;line-height:1.6;">스노우보드 → 학적/성적 → 학점이수현황 → PDF 저장<br>개인정보는 분석 후 즉시 삭제됩니다</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;flex-shrink:0;">
+      <button onclick="showScreen('career')" class="btn-blue" style="width:100%;height:46px;">다음</button>
+      <button onclick="showScreen('career')" style="width:100%;height:34px;background:none;border:none;font-size:12px;color:#C0C8D8;">지금은 건너뛸게요</button>
+    </div>
+  </div>
+</div>
+
+<!-- ④ CAREER -->
+<div id="career" class="screen" style="background:#F4F6FA;">
+  <div style="width:420px;height:520px;background:#fff;border-radius:24px;padding:36px;border:1px solid #E8EEF8;box-shadow:0 4px 24px rgba(59,130,246,0.07);display:flex;flex-direction:column;" class="fade-up">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:30px;flex-shrink:0;">
+      <button onclick="showScreen('upload')" style="background:none;border:none;color:#9CA3AF;font-size:13px;display:flex;align-items:center;gap:5px;padding:0;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> 뒤로</button>
+      <div style="display:flex;gap:5px;">
+        <div style="width:20px;height:3px;border-radius:3px;background:#3B82F6;"></div>
+        <div style="width:20px;height:3px;border-radius:3px;background:#3B82F6;"></div>
+        <div style="width:20px;height:3px;border-radius:3px;background:#3B82F6;"></div>
+        <div style="width:20px;height:3px;border-radius:3px;background:#E5E7EB;"></div>
+      </div>
+    </div>
+    <h2 style="font-weight:800;font-size:20px;color:#111;margin-bottom:4px;flex-shrink:0;">관심 진로</h2>
+    <p style="font-size:12px;color:#9CA3AF;margin-bottom:20px;flex-shrink:0;">자유롭게 입력해주시면 AI가 분석해드려요</p>
+    <div style="flex:1;display:flex;flex-direction:column;gap:12px;min-height:0;">
+      <div style="position:relative;flex:1;display:flex;flex-direction:column;">
+        <textarea id="career-prompt" placeholder="예) AI 모델을 직접 설계하고 학습시키는 머신러닝 엔지니어가 되고 싶어요. 관심 분야는 자연어처리와 추천시스템이에요." style="flex:1;width:100%;border:1.5px solid #E5E7EB;border-radius:13px;padding:14px 16px 38px;font-size:13px;color:#111;line-height:1.6;resize:none;background:#FAFBFF;"></textarea>
+        <div style="position:absolute;bottom:10px;left:16px;display:flex;align-items:center;gap:6px;pointer-events:none;">
+          <span style="font-size:10px;color:#9CA3AF;">✦ 진로 · 관심사 · 목표 등을 자유롭게 입력</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        <button onclick="fillPrompt(this)" style="font-size:11px;color:#4B5563;background:#F4F6FA;border:1px solid #E5E7EB;border-radius:18px;padding:6px 11px;font-weight:500;">🤖 AI · 머신러닝</button>
+        <button onclick="fillPrompt(this)" style="font-size:11px;color:#4B5563;background:#F4F6FA;border:1px solid #E5E7EB;border-radius:18px;padding:6px 11px;font-weight:500;">💻 백엔드 개발</button>
+        <button onclick="fillPrompt(this)" style="font-size:11px;color:#4B5563;background:#F4F6FA;border:1px solid #E5E7EB;border-radius:18px;padding:6px 11px;font-weight:500;">📊 데이터 분석</button>
+        <button onclick="fillPrompt(this)" style="font-size:11px;color:#4B5563;background:#F4F6FA;border:1px solid #E5E7EB;border-radius:18px;padding:6px 11px;font-weight:500;">🔒 보안</button>
+      </div>
+    </div>
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;">
+      <button onclick="showScreen('loading')" style="width:100%;height:36px;background:none;border:1.5px solid #E5E7EB;border-radius:10px;font-size:12px;color:#9CA3AF;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#9CA3AF'" onmouseout="this.style.borderColor='#E5E7EB'">아직 모르겠어요</button>
+      <button onclick="showScreen('loading')" class="btn-blue" style="width:100%;height:46px;">분석 시작하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ⑤ LOADING -->
+<div id="loading" class="screen" style="background:#F4F6FA;">
+  <div style="width:380px;background:#fff;border-radius:24px;padding:52px 44px;border:1px solid #E8EEF8;box-shadow:0 4px 24px rgba(59,130,246,0.07);text-align:center;" class="fade-up">
+    <div style="width:52px;height:52px;margin:0 auto 24px;display:flex;align-items:center;justify-content:center;">
+      <svg class="spin" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.8" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+    </div>
+    <div style="font-weight:800;font-size:19px;color:#111;margin-bottom:6px;">로드맵을 설계하고 있어요</div>
+    <div style="font-size:13px;color:#9CA3AF;margin-bottom:34px;">잠깐만 기다려주세요</div>
+    <div id="loading-checks" style="text-align:left;display:flex;flex-direction:column;gap:16px;"></div>
+  </div>
+</div>
+
+<!-- ⑥ DASHBOARD -->
+<div id="dashboard">
+  <!-- NAV -->
+  <nav style="background:#fff;border-bottom:1px solid #EEF2FF;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;flex-shrink:0;position:relative;z-index:100;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:28px;height:28px;background:#3B82F6;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      </div>
+      <span style="font-weight:800;font-size:16px;color:#111;">쑥맵</span>
+      <span style="font-size:11px;color:#C0C8D8;">숙명여자대학교 수강 설계 플랫폼</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="font-size:12px;color:#6B7280;background:#F4F6FA;padding:6px 12px;border-radius:8px;font-weight:500;margin-right:6px;">2025 — 1학기</span>
+
+      <!-- BELL -->
+      <div style="position:relative;">
+        <button id="bell-btn" onclick="togglePanel('notif-panel','bell-btn')" style="width:36px;height:36px;border-radius:10px;background:none;border:none;display:flex;align-items:center;justify-content:center;transition:background 0.15s;" onmouseover="this.style.background='#F4F6FA'" onmouseout="this.style.background='none'">
+          <div style="position:relative;">
+            <div style="width:7px;height:7px;background:#EF4444;border-radius:50%;position:absolute;top:-2px;right:-2px;border:1.5px solid #fff;"></div>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+        </button>
+        <!-- Notification Panel -->
+        <div id="notif-panel" class="panel" style="width:320px;right:0;padding:0;overflow:hidden;">
+          <div style="padding:16px 18px 12px;border-bottom:1px solid #F0F4FF;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:13px;font-weight:700;color:#111;">알림</span>
+            <button onclick="markAllRead()" style="font-size:11px;color:#3B82F6;background:none;border:none;font-weight:500;">모두 읽음</button>
+          </div>
+          <div style="max-height:280px;overflow-y:auto;">
+            <div class="notif-item unread" onclick="readNotif(this)" style="padding:13px 18px;border-bottom:1px solid #F8FAFF;cursor:pointer;display:flex;gap:11px;align-items:flex-start;background:#F8FAFF;transition:background 0.15s;" onmouseover="this.style.background='#EFF6FF'" onmouseout="if(this.classList.contains('unread'))this.style.background='#F8FAFF'; else this.style.background='#fff'">
+              <div style="width:8px;height:8px;border-radius:50%;background:#3B82F6;flex-shrink:0;margin-top:4px;"></div>
+              <div><div style="font-size:12px;font-weight:600;color:#111;margin-bottom:2px;">컴퓨터네트워크 수강 권장 시기</div><div style="font-size:11px;color:#9CA3AF;line-height:1.5;">3학년 권장 과목이에요. 이번 학기 수강을 놓치면 졸업이 지연될 수 있어요.</div><div style="font-size:10px;color:#C0C8D8;margin-top:4px;">방금 전</div></div>
+            </div>
+            <div class="notif-item unread" onclick="readNotif(this)" style="padding:13px 18px;border-bottom:1px solid #F8FAFF;cursor:pointer;display:flex;gap:11px;align-items:flex-start;background:#F8FAFF;transition:background 0.15s;" onmouseover="this.style.background='#EFF6FF'" onmouseout="if(this.classList.contains('unread'))this.style.background='#F8FAFF'; else this.style.background='#fff'">
+              <div style="width:8px;height:8px;border-radius:50%;background:#3B82F6;flex-shrink:0;margin-top:4px;"></div>
+              <div><div style="font-size:12px;font-weight:600;color:#111;margin-bottom:2px;">AI 시간표가 완성됐어요 ✦</div><div style="font-size:11px;color:#9CA3AF;line-height:1.5;">이번 학기 최적 시간표가 생성됐어요. 지금 확인해보세요!</div><div style="font-size:10px;color:#C0C8D8;margin-top:4px;">5분 전</div></div>
+            </div>
+            <div class="notif-item unread" onclick="readNotif(this)" style="padding:13px 18px;border-bottom:1px solid #F8FAFF;cursor:pointer;display:flex;gap:11px;align-items:flex-start;background:#F8FAFF;transition:background 0.15s;" onmouseover="this.style.background='#EFF6FF'" onmouseout="if(this.classList.contains('unread'))this.style.background='#F8FAFF'; else this.style.background='#fff'">
+              <div style="width:8px;height:8px;border-radius:50%;background:#F59E0B;flex-shrink:0;margin-top:4px;"></div>
+              <div><div style="font-size:12px;font-weight:600;color:#111;margin-bottom:2px;">선수과목 미이수 경고</div><div style="font-size:11px;color:#9CA3AF;line-height:1.5;">시스템프로그래밍 수강을 위해 논리회로 이수가 필요해요.</div><div style="font-size:10px;color:#C0C8D8;margin-top:4px;">1시간 전</div></div>
+            </div>
+            <div class="notif-item" onclick="readNotif(this)" style="padding:13px 18px;border-bottom:1px solid #F8FAFF;cursor:pointer;display:flex;gap:11px;align-items:flex-start;background:#fff;transition:background 0.15s;" onmouseover="this.style.background='#F8FAFF'" onmouseout="this.style.background='#fff'">
+              <div style="width:8px;height:8px;border-radius:50%;background:#E5E7EB;flex-shrink:0;margin-top:4px;"></div>
+              <div><div style="font-size:12px;font-weight:600;color:#6B7280;margin-bottom:2px;">로드맵 분석 완료</div><div style="font-size:11px;color:#9CA3AF;line-height:1.5;">학점이수표 기반 커리큘럼 로드맵이 생성됐어요.</div><div style="font-size:10px;color:#C0C8D8;margin-top:4px;">어제</div></div>
+            </div>
+            <div class="notif-item" onclick="readNotif(this)" style="padding:13px 18px;cursor:pointer;display:flex;gap:11px;align-items:flex-start;background:#fff;transition:background 0.15s;" onmouseover="this.style.background='#F8FAFF'" onmouseout="this.style.background='#fff'">
+              <div style="width:8px;height:8px;border-radius:50%;background:#E5E7EB;flex-shrink:0;margin-top:4px;"></div>
+              <div><div style="font-size:12px;font-weight:600;color:#6B7280;margin-bottom:2px;">2025-1학기 수강신청 안내</div><div style="font-size:11px;color:#9CA3AF;line-height:1.5;">수강신청 기간이 2주 후 시작돼요. AI 추천 과목을 미리 확인해두세요.</div><div style="font-size:10px;color:#C0C8D8;margin-top:4px;">3일 전</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div style="position:relative;">
+        <button id="profile-btn" onclick="togglePanel('profile-panel','profile-btn')" style="display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:10px;background:none;border:none;transition:background 0.15s;" onmouseover="this.style.background='#F4F6FA'" onmouseout="this.style.background='none'">
+          <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#6366F1);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">전</div>
+          <span style="font-size:13px;color:#111;font-weight:600;">전민서</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <!-- Profile Panel -->
+        <div id="profile-panel" class="panel" style="width:180px;padding:8px;">
+          <button onclick="openMyPage()" style="width:100%;text-align:left;padding:9px 12px;border-radius:10px;border:none;background:none;font-size:13px;color:#374151;font-weight:500;display:flex;align-items:center;gap:9px;transition:background 0.15s;" onmouseover="this.style.background='#F4F6FA'" onmouseout="this.style.background='none'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 마이페이지
+          </button>
+          <button style="width:100%;text-align:left;padding:9px 12px;border-radius:10px;border:none;background:none;font-size:13px;color:#374151;font-weight:500;display:flex;align-items:center;gap:9px;transition:background 0.15s;" onmouseover="this.style.background='#F4F6FA'" onmouseout="this.style.background='none'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> 설정
+          </button>
+          <div style="height:1px;background:#F0F4FF;margin:4px 0;"></div>
+          <button onclick="showScreen('intro')" style="width:100%;text-align:left;padding:9px 12px;border-radius:10px;border:none;background:none;font-size:13px;color:#EF4444;font-weight:500;display:flex;align-items:center;gap:9px;transition:background 0.15s;" onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background='none'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg> 로그아웃
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div style="flex:1;display:flex;flex-direction:column;padding:28px 40px 20px;gap:18px;overflow:hidden;">
+
+    <!-- GREETING -->
+    <div style="flex-shrink:0;">
+      <h1 style="font-size:19px;font-weight:700;color:#111827;margin-bottom:4px;">안녕하세요, 전민서님 👋</h1>
+      <p id="greet-sub" style="font-size:12px;color:#9CA3AF;">컴퓨터과학전공 · 3학년 · AI·ML 트랙</p>
+    </div>
+
+    <!-- STAT CARDS — 3 cols, compact -->
+    <div style="display:flex;gap:12px;flex-shrink:0;align-items:stretch;">
+
+      <!-- Donut -->
+      <div class="card" style="padding:16px 20px;display:flex;align-items:center;gap:16px;flex-shrink:0;">
+        <svg width="68" height="68" viewBox="0 0 68 68">
+          <circle cx="34" cy="34" r="24" fill="none" stroke="#EEF2FF" stroke-width="9"/>
+          <circle cx="34" cy="34" r="24" fill="none" stroke="#3B82F6" stroke-width="9"
+                  stroke-dasharray="100.5 150.8" stroke-linecap="round"
+                  transform="rotate(-90 34 34)"/>
+          <text x="34" y="30" text-anchor="middle" font-size="13" font-weight="800" fill="#111827" font-family="Noto Sans KR,sans-serif">80</text>
+          <text x="34" y="41" text-anchor="middle" font-size="7.5" fill="#9CA3AF" font-family="Noto Sans KR,sans-serif">/ 120</text>
+        </svg>
+        <div>
+          <div style="font-size:10px;color:#9CA3AF;font-weight:500;margin-bottom:3px;">취득 학점</div>
+          <div style="font-size:18px;font-weight:800;color:#111;line-height:1.1;">80<span style="font-size:11px;color:#9CA3AF;font-weight:400;margin-left:2px;">학점</span></div>
+          <div style="font-size:10px;color:#3B82F6;font-weight:500;margin-top:3px;">40학점 남았어요</div>
+        </div>
+      </div>
+
+      <!-- Semester + Graduation side by side, compact -->
+      <div style="display:flex;gap:12px;flex:1;">
+        <div class="card" style="flex:1;padding:16px 18px;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-size:10px;color:#9CA3AF;font-weight:500;margin-bottom:6px;">이번 학기 수강</div>
+          <div style="font-size:24px;font-weight:800;color:#111;line-height:1;letter-spacing:-0.5px;">18<span style="font-size:12px;color:#9CA3AF;font-weight:400;margin-left:2px;">학점</span></div>
+          <div style="font-size:10px;color:#6B7280;margin-top:5px;">5과목 · 권장 17–19학점</div>
+        </div>
+        <div onclick="openGradModal()" style="flex:1;background:#3B82F6;border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;justify-content:center;cursor:pointer;position:relative;transition:transform 0.18s, box-shadow 0.18s;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 8px 22px rgba(59,130,246,0.32)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">
+          <div style="font-size:10px;color:rgba(255,255,255,0.55);font-weight:500;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+            <span>졸업 예상</span>
+            <span style="font-size:9px;color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.15);padding:2px 7px;border-radius:20px;font-weight:600;display:flex;align-items:center;gap:3px;">더보기 <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          </div>
+          <div style="font-size:24px;font-weight:800;color:#fff;line-height:1;letter-spacing:-0.5px;">2026<span style="font-size:12px;font-weight:400;margin-left:2px;opacity:0.55;">-1</span></div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:5px;">2학기 후 졸업 가능</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div style="display:grid;grid-template-columns:1.15fr 0.85fr;gap:14px;flex:1;min-height:0;">
+
+      <!-- CURRICULUM TREE -->
+      <div class="card" style="padding:18px 20px;display:flex;flex-direction:column;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-shrink:0;">
+          <div style="display:flex;align-items:center;gap:7px;">
+            <h2 style="font-size:13px;font-weight:700;color:#111;">커리큘럼 로드맵</h2>
+            <span id="route-mode-badge" style="font-size:9px;color:#6B7280;background:#F4F6FA;border:1px solid #E5E7EB;padding:2px 7px;border-radius:20px;">선수과목 기반</span>
+          </div>
+          <div id="route-legend" style="display:flex;gap:10px;">
+            <div style="display:flex;align-items:center;gap:3px;font-size:9px;color:#6B7280;"><span style="width:8px;height:8px;border-radius:2px;background:#EFF6FF;border-left:2px solid #3B82F6;display:inline-block;"></span>이수</div>
+            <div style="display:flex;align-items:center;gap:3px;font-size:9px;color:#6B7280;"><span style="width:8px;height:8px;border-radius:2px;border:1.5px solid #3B82F6;background:#fff;display:inline-block;"></span>예정</div>
+            <div style="display:flex;align-items:center;gap:3px;font-size:9px;color:#6B7280;"><span style="width:8px;height:8px;border-radius:2px;background:#FFFBF0;border:1.5px solid #F59E0B;display:inline-block;"></span>권장</div>
+            <div style="display:flex;align-items:center;gap:3px;font-size:9px;color:#6B7280;"><span style="width:8px;height:8px;border-radius:2px;background:#F4F6FA;border:1px solid #E5E7EB;display:inline-block;"></span>잠김</div>
+          </div>
+        </div>
+        <div id="year-header" style="display:grid;grid-template-columns:repeat(4,1fr);flex-shrink:0;margin-bottom:6px;"></div>
+        <div id="route-container" style="flex:1;position:relative;overflow:hidden;"></div>
+      </div>
+
+      <!-- TIMETABLE -->
+      <div class="card" style="padding:18px 18px 14px;display:flex;flex-direction:column;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-shrink:0;">
+          <div style="display:flex;align-items:center;gap:7px;">
+            <h2 style="font-size:13px;font-weight:700;color:#111;">AI 추천 시간표</h2>
+            <span id="tt-variant-label" style="font-size:9px;color:#3B82F6;font-weight:600;background:#EFF6FF;padding:3px 8px;border-radius:20px;">✦ A안 — 오전 집중형</span>
+          </div>
+          <div id="tt-variant-tabs" style="display:flex;gap:3px;background:#F4F6FA;border-radius:8px;padding:3px;">
+            <button data-v="A" onclick="setTimetableVariant('A')" style="width:26px;height:22px;border-radius:6px;border:none;font-size:10px;font-weight:700;background:#fff;color:#3B82F6;box-shadow:0 1px 3px rgba(0,0,0,0.06);cursor:pointer;">A</button>
+            <button data-v="B" onclick="setTimetableVariant('B')" style="width:26px;height:22px;border-radius:6px;border:none;font-size:10px;font-weight:700;background:transparent;color:#9CA3AF;cursor:pointer;">B</button>
+            <button data-v="C" onclick="setTimetableVariant('C')" style="width:26px;height:22px;border-radius:6px;border:none;font-size:10px;font-weight:700;background:transparent;color:#9CA3AF;cursor:pointer;">C</button>
+          </div>
+        </div>
+        <div id="tt-container" style="flex:1;position:relative;overflow:hidden;border-radius:8px;"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MY PAGE MODAL -->
+<div id="mypage-overlay" class="modal-overlay" onclick="closeMyPage(event)">
+  <div class="modal-box" style="padding:36px 36px 28px;" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#6366F1);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;">전</div>
+        <div>
+          <div style="font-weight:800;font-size:16px;color:#111;">전민서</div>
+          <div style="font-size:11px;color:#9CA3AF;">jeonminseo@sookmyung.ac.kr</div>
+        </div>
+      </div>
+      <button onclick="closeMyPage()" style="width:30px;height:30px;border-radius:8px;background:#F4F6FA;border:none;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-size:18px;line-height:1;">×</button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#9CA3AF;display:block;margin-bottom:6px;letter-spacing:0.04em;">학과</label>
+        <select id="my-major" style="width:100%;height:42px;border:1.5px solid #E5E7EB;border-radius:10px;padding:0 12px;font-size:13px;color:#111;background:#fff;">
+          <option selected>컴퓨터과학전공</option><option>소프트웨어학부</option><option>데이터사이언스학부</option><option>IT공학전공</option>
+          <option>수학과</option><option>통계학과</option><option>물리학과</option><option>화학과</option><option>생명시스템학부</option>
+          <option>기계시스템학부</option><option>전자공학전공</option><option>화공생명공학부</option>
+          <option>한국어문학부</option><option>역사문화학과</option><option>철학과</option><option>영어영문학부</option>
+          <option>독일언어·문화학과</option><option>프랑스언어·문화학과</option><option>중어중문학부</option><option>일본학과</option>
+          <option>정치외교학과</option><option>행정학과</option><option>홍보광고학과</option><option>경제학부</option>
+          <option>소비자경제학과</option><option>사회심리학과</option><option>경영학부</option><option>회계학과</option>
+          <option>앙트레프레너십전공</option><option>피아노과</option><option>관현악과</option><option>성악과</option>
+          <option>작곡과</option><option>공예학과</option><option>회화과</option><option>시각디자인학과</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#9CA3AF;display:block;margin-bottom:6px;letter-spacing:0.04em;">복수전공 / 부전공 <span style="font-size:10px;color:#3B82F6;font-weight:600;margin-left:4px;">NEW</span></label>
+        <select id="my-double-major" style="width:100%;height:42px;border:1.5px solid #E5E7EB;border-radius:10px;padding:0 12px;font-size:13px;color:#111;background:#fff;">
+          <option value="" selected>선택 안 함</option>
+          <option>컴퓨터과학전공</option><option>소프트웨어학부</option><option>데이터사이언스학부</option><option>IT공학전공</option>
+          <option>수학과</option><option>통계학과</option><option>물리학과</option><option>화학과</option><option>생명시스템학부</option>
+          <option>기계시스템학부</option><option>전자공학전공</option><option>화공생명공학부</option>
+          <option>한국어문학부</option><option>역사문화학과</option><option>철학과</option><option>영어영문학부</option>
+          <option>독일언어·문화학과</option><option>프랑스언어·문화학과</option><option>중어중문학부</option><option>일본학과</option>
+          <option>정치외교학과</option><option>행정학과</option><option>홍보광고학과</option><option>경제학부</option>
+          <option>소비자경제학과</option><option>사회심리학과</option><option>경영학부</option><option>회계학과</option>
+          <option>앙트레프레너십전공</option><option>피아노과</option><option>관현악과</option><option>성악과</option>
+          <option>작곡과</option><option>공예학과</option><option>회화과</option><option>시각디자인학과</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#9CA3AF;display:block;margin-bottom:6px;letter-spacing:0.04em;">학번</label>
+          <input type="text" value="2022" style="width:100%;height:42px;border:1.5px solid #E5E7EB;border-radius:10px;padding:0 12px;font-size:13px;color:#111;"/>
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:#9CA3AF;display:block;margin-bottom:6px;letter-spacing:0.04em;">학년</label>
+          <select style="width:100%;height:42px;border:1.5px solid #E5E7EB;border-radius:10px;padding:0 12px;font-size:13px;color:#111;background:#fff;">
+            <option>1학년</option><option selected>2학년</option><option>3학년</option><option>4학년</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#9CA3AF;display:block;margin-bottom:6px;letter-spacing:0.04em;">관심 진로</label>
+        <textarea id="my-career-prompt" rows="2" placeholder="진로 · 관심사 · 목표를 자유롭게 입력하세요" style="width:100%;border:1.5px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:13px;color:#111;background:#fff;resize:none;line-height:1.5;"></textarea>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:#9CA3AF;display:block;margin-bottom:6px;letter-spacing:0.04em;">학점이수표</label>
+        <div style="height:42px;border:1.5px solid #E5E7EB;border-radius:10px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:12px;color:#6B7280;">이수현황_2025_1.pdf</span>
+          <button style="font-size:11px;color:#3B82F6;background:none;border:none;font-weight:600;">재업로드</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;">
+      <button onclick="closeMyPage()" style="flex:1;height:44px;border:1.5px solid #E5E7EB;border-radius:11px;background:#fff;font-size:13px;color:#6B7280;font-weight:500;">취소</button>
+      <button onclick="saveMyPage()" class="btn-blue" style="flex:2;height:44px;border-radius:11px;font-size:13px;">저장하고 재분석</button>
+    </div>
+  </div>
+</div>
+
+<!-- GRADUATION DETAILS MODAL -->
+<div id="grad-overlay" class="modal-overlay" onclick="if(event.target===this)closeGradModal()">
+  <div class="modal-box" style="padding:0;width:480px;overflow:hidden;" onclick="event.stopPropagation()">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#3B82F6,#6366F1);padding:24px 28px 22px;color:#fff;position:relative;">
+      <button onclick="closeGradModal()" style="position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.18);border:none;color:#fff;font-size:18px;line-height:1;">×</button>
+      <div style="font-size:11px;font-weight:600;opacity:0.8;margin-bottom:6px;letter-spacing:0.04em;">졸업까지 남은 여정</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
+        <span style="font-size:30px;font-weight:800;letter-spacing:-1px;">2026<span style="font-size:14px;opacity:0.7;font-weight:500;">-1학기</span></span>
+        <span style="font-size:12px;background:rgba(255,255,255,0.22);padding:4px 10px;border-radius:20px;font-weight:600;">예상 졸업</span>
+      </div>
+      <div style="font-size:12px;opacity:0.85;">앞으로 <b id="grad-rem-cred">40</b>학점, <b id="grad-rem-sem">2</b>개 학기가 남았어요</div>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:22px 28px 26px;">
+
+      <!-- Progress bar -->
+      <div style="margin-bottom:22px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:11px;font-weight:700;color:#6B7280;letter-spacing:0.04em;">전체 졸업 학점</span>
+          <span style="font-size:11px;color:#9CA3AF;"><b style="color:#111;font-size:13px;">80</b> / 120</span>
+        </div>
+        <div style="height:8px;background:#EEF2FF;border-radius:6px;overflow:hidden;">
+          <div style="height:100%;width:66.7%;background:linear-gradient(90deg,#3B82F6,#6366F1);border-radius:6px;"></div>
+        </div>
+      </div>
+
+      <!-- Required credit categories -->
+      <div style="font-size:11px;font-weight:700;color:#9CA3AF;letter-spacing:0.04em;margin-bottom:10px;">영역별 이수 현황</div>
+      <div id="grad-categories" style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px;">
+        <!-- filled in by JS -->
+      </div>
+
+      <!-- Plan -->
+      <div style="background:#F4F6FA;border-radius:13px;padding:14px 16px;">
+        <div style="font-size:11px;font-weight:700;color:#3B82F6;letter-spacing:0.04em;margin-bottom:10px;">📅 학기별 추천 이수 계획</div>
+        <div id="grad-semesters" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+let fileUploaded = false;
+let analysisMode = 'cs'; // 'cs' = 컴퓨터과학 only, 'mixed' = 컴과+경영 복수전공
+let timetableVariant = 'A';
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('dashboard').classList.remove('active');
+  closeAllPanels();
+  if (id === 'dashboard') {
+    document.getElementById('dashboard').classList.add('active');
+    setTimeout(() => { renderRoute(); renderTimetable(); updateGreeting(); }, 120);
+  } else {
+    document.getElementById(id).classList.add('active');
+  }
+  if (id === 'loading') startLoading();
+}
+
+function updateGreeting() {
+  const greet = document.getElementById('greet-sub');
+  if (!greet) return;
+  if (analysisMode === 'mixed') {
+    greet.textContent = '컴퓨터과학전공 · 경영학부 복수전공 · 3학년 · AI·ML + 비즈니스 트랙';
+  } else {
+    greet.textContent = '컴퓨터과학전공 · 3학년 · AI·ML 트랙';
+  }
+}
+
+function fillPrompt(btn) {
+  const map = {
+    '🤖 AI · 머신러닝': 'AI 모델을 직접 설계하고 학습시키는 머신러닝 엔지니어가 되고 싶어요. 자연어처리와 추천시스템에 관심이 많아요.',
+    '💻 백엔드 개발': '대규모 트래픽을 처리하는 서버를 설계하는 백엔드 개발자가 되고 싶어요. 시스템 설계 및 개발 프로젝트에 관심있어요.',
+    '📊 데이터 분석': '비즈니스 의사결정에 도움을 주는 데이터 분석가가 되고 싶어요. 통계와 시각화 도구를 활용하고 싶어요.',
+    '🔒 보안': '시스템과 네트워크 보안 분야에서 일하고 싶어요. 암호학과 침해사고 대응에 관심이 있어요.',
+  };
+  const ta = document.getElementById('career-prompt');
+  ta.value = map[btn.textContent.trim()] || '';
+  ta.focus();
+}
+
+function selectGrade(btn) {
+  document.querySelectorAll('.grade-btn').forEach(b => {
+    b.style.background='#fff'; b.style.color='#9CA3AF'; b.style.border='1.5px solid #E5E7EB';
+  });
+  btn.style.background='#3B82F6'; btn.style.color='#fff'; btn.style.border='none';
+}
+
+function handleFile(input) {
+  if (!input.files[0]) return;
+  fileUploaded = true;
+  const zone = document.getElementById('upload-zone');
+  zone.style.borderColor='#3B82F6'; zone.style.background='#EFF6FF';
+  document.getElementById('upload-icon').style.background='#DBEAFE';
+  document.getElementById('upload-icon').innerHTML='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  document.getElementById('upload-text').innerHTML='<div style="font-size:13px;font-weight:600;color:#3B82F6;margin-bottom:3px;">'+input.files[0].name+'</div><div style="font-size:11px;color:#9CA3AF;">업로드 완료</div>';
+}
+
+const uploadZone = document.getElementById('upload-zone');
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); if(!fileUploaded){uploadZone.style.borderColor='#3B82F6';uploadZone.style.background='#EFF6FF';} });
+uploadZone.addEventListener('dragleave', () => { if(!fileUploaded){uploadZone.style.borderColor='#BFDBFE';uploadZone.style.background='#F8FAFF';} });
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  const fi = document.getElementById('file-input');
+  if (e.dataTransfer.files.length) { fi.files = e.dataTransfer.files; handleFile(fi); }
+});
+
+// ── Panel toggle ──
+function closeAllPanels() {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('open'));
+}
+
+function togglePanel(panelId, btnId) {
+  const panel = document.getElementById(panelId);
+  const isOpen = panel.classList.contains('open');
+  closeAllPanels();
+  if (!isOpen) panel.classList.add('open');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.panel') && !e.target.closest('#bell-btn') && !e.target.closest('#profile-btn')) {
+    closeAllPanels();
+  }
+});
+
+// ── Notification helpers ──
+function readNotif(el) {
+  if (el.classList.contains('unread')) {
+    el.classList.remove('unread');
+    el.querySelector('div:first-child').style.background = '#E5E7EB';
+    el.style.background = '#fff';
+    updateBadge();
+  }
+}
+function markAllRead() {
+  document.querySelectorAll('.notif-item.unread').forEach(el => readNotif(el));
+}
+function updateBadge() {
+  const count = document.querySelectorAll('.notif-item.unread').length;
+  const dot = document.querySelector('#bell-btn .absolute, #bell-btn [style*="EF4444"]');
+  if (count === 0 && dot) dot.style.display = 'none';
+}
+
+// ── My Page ──
+function openMyPage() {
+  closeAllPanels();
+  // 첫 진로 입력 화면에서 입력한 프롬프트를 마이페이지에 그대로 표시
+  const src = document.getElementById('career-prompt');
+  const dst = document.getElementById('my-career-prompt');
+  if (src && dst && !dst.value) dst.value = src.value || '';
+  document.getElementById('mypage-overlay').classList.add('open');
+}
+function closeMyPage(e) {
+  if (!e || e.target === document.getElementById('mypage-overlay') || e.type !== 'click' || !e.currentTarget.classList.contains('modal-overlay')) {
+    document.getElementById('mypage-overlay').classList.remove('open');
+  }
+}
+function saveMyPage() {
+  document.getElementById('mypage-overlay').classList.remove('open');
+  // 복수전공이 "경영학부"이면 컴과+경영 혼합 분석 모드로 전환 (시연용)
+  const dm = document.getElementById('my-double-major');
+  if (dm && dm.value === '경영학부') {
+    analysisMode = 'mixed';
+  } else if (dm && (dm.value === '' || !dm.value)) {
+    analysisMode = 'cs';
+  }
+  // 잠깐의 텀 후 재분석 로딩 화면으로 이동
+  setTimeout(() => showScreen('loading'), 250);
+}
+document.getElementById('mypage-overlay').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('open');
+});
+
+// ── Graduation details modal ──
+function openGradModal() {
+  const isMixed = (analysisMode === 'mixed');
+
+  // 영역별 이수 현황 데이터 (시연용)
+  const categoriesCS = [
+    {label:'전공필수',     done:24, total:36, color:'#3B82F6'},
+    {label:'전공선택',     done:18, total:30, color:'#6366F1'},
+    {label:'교양핵심',     done:14, total:14, color:'#10B981'},
+    {label:'일반교양',     done:12, total:18, color:'#F59E0B'},
+    {label:'자유선택',     done:12, total:22, color:'#94A3B8'},
+  ];
+  const categoriesMixed = [
+    {label:'주전공 — 컴퓨터과학', done:36, total:54, color:'#3B82F6'},
+    {label:'복수전공 — 경영학부', done:18, total:36, color:'#8B5CF6'},
+    {label:'교양핵심',          done:14, total:14, color:'#10B981'},
+    {label:'일반교양',          done:8,  total:12, color:'#F59E0B'},
+    {label:'자유선택',          done:4,  total:10, color:'#94A3B8'},
+  ];
+  const cats = isMixed ? categoriesMixed : categoriesCS;
+  const totalDone  = cats.reduce((s,c)=>s+c.done, 0);
+  const totalNeed  = cats.reduce((s,c)=>s+c.total,0);
+  const remaining  = totalNeed - totalDone;
+  const remSemest  = isMixed ? 3 : 2;
+
+  document.getElementById('grad-rem-cred').textContent = remaining;
+  document.getElementById('grad-rem-sem').textContent  = remSemest;
+
+  // 카테고리 렌더
+  const catBox = document.getElementById('grad-categories');
+  catBox.innerHTML = cats.map(c => {
+    const pct = Math.min(100, Math.round(c.done / c.total * 100));
+    const isDone = c.done >= c.total;
+    return `<div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+        <div style="display:flex;align-items:center;gap:7px;">
+          <span style="width:7px;height:7px;border-radius:2px;background:${c.color};"></span>
+          <span style="font-size:12px;color:#111;font-weight:600;">${c.label}</span>
+          ${isDone ? '<span style="font-size:9px;font-weight:700;color:#10B981;background:#ECFDF5;padding:2px 6px;border-radius:20px;">완료</span>' : ''}
+        </div>
+        <span style="font-size:11px;color:#6B7280;font-weight:500;"><b style="color:#111;">${c.done}</b> / ${c.total}<span style="color:#C0C8D8;font-size:10px;margin-left:3px;">학점</span></span>
+      </div>
+      <div style="height:5px;background:#EEF2FF;border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:${c.color};border-radius:4px;transition:width 0.5s;"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // 학기별 계획
+  const plansCS = [
+    {sem:'2025-2학기', cred:18, courses:'운영체제 · 컴퓨터네트워크 · 데이터베이스 · 균형교양 외'},
+    {sem:'2026-1학기', cred:18, courses:'소프트웨어공학 · 졸업프로젝트 Ⅰ · 전공선택 2 · 자유선택'},
+    {sem:'2026-2학기', cred:14, courses:'졸업프로젝트 Ⅱ · 전공선택 1 · 자유선택', tag:'졸업'},
+  ];
+  const plansMixed = [
+    {sem:'2025-2학기', cred:18, courses:'운영체제 · 데이터베이스 · 마케팅원론 · 경영정보시스템'},
+    {sem:'2026-1학기', cred:19, courses:'컴퓨터네트워크 · 비즈니스애널리틱스 · 재무관리 · 균형교양'},
+    {sem:'2026-2학기', cred:18, courses:'소프트웨어공학 · 디지털비즈니스모델 · 졸업프로젝트 Ⅰ'},
+    {sem:'2027-1학기', cred:13, courses:'졸업프로젝트 Ⅱ · 전략경영 · 자유선택', tag:'졸업'},
+  ];
+  const plans = isMixed ? plansMixed : plansCS;
+  const semBox = document.getElementById('grad-semesters');
+  semBox.innerHTML = plans.map(p => `
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 11px;background:#fff;border-radius:9px;border:1px solid #EEF2FF;">
+      <div style="font-size:11px;font-weight:700;color:#3B82F6;background:#EFF6FF;padding:5px 9px;border-radius:7px;flex-shrink:0;min-width:78px;text-align:center;">${p.sem}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:11px;color:#111;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.courses}</div>
+        <div style="font-size:10px;color:#9CA3AF;margin-top:2px;">${p.cred}학점</div>
+      </div>
+      ${p.tag ? `<span style="font-size:9px;font-weight:700;color:#fff;background:linear-gradient(135deg,#3B82F6,#6366F1);padding:3px 8px;border-radius:20px;flex-shrink:0;">🎓 ${p.tag}</span>` : ''}
+    </div>
+  `).join('');
+
+  document.getElementById('grad-overlay').classList.add('open');
+}
+function closeGradModal() {
+  document.getElementById('grad-overlay').classList.remove('open');
+}
+
+// ── Timetable variant tabs ──
+function setTimetableVariant(v) {
+  timetableVariant = v;
+  // 탭 활성/비활성 스타일 업데이트
+  document.querySelectorAll('#tt-variant-tabs button').forEach(b => {
+    if (b.dataset.v === v) {
+      b.style.background = '#fff'; b.style.color = '#3B82F6'; b.style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)';
+    } else {
+      b.style.background = 'transparent'; b.style.color = '#9CA3AF'; b.style.boxShadow = 'none';
+    }
+  });
+  // 라벨 갱신
+  const lbl = document.getElementById('tt-variant-label');
+  const labels = {
+    A: '✦ A안 — 오전 집중형',
+    B: '✦ B안 — 공강일 확보형',
+    C: '✦ C안 — 균형 분산형',
+  };
+  if (lbl) lbl.textContent = labels[v] || labels.A;
+  renderTimetable();
+}
+
+// ── Loading ──
+function startLoading() {
+  const container = document.getElementById('loading-checks');
+  const items = ['학점이수표 파싱 중','전공 이수 현황 확인','졸업요건 대조 중','맞춤 로드맵 생성 중'];
+  container.innerHTML = items.map((label, i) => `
+    <div style="display:flex;align-items:center;gap:13px;">
+      <div id="licon-${i}" style="width:20px;height:20px;border-radius:50%;border:1.5px solid #E5E7EB;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.3s;"></div>
+      <span id="llabel-${i}" style="font-size:13px;color:#D1D5DB;transition:color 0.3s;">${label}</span>
+    </div>`).join('');
+  let step = 0;
+  const iv = setInterval(() => {
+    if (step > 0) {
+      const prev = document.getElementById('licon-'+(step-1));
+      prev.style.background='#3B82F6'; prev.style.border='none';
+      prev.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      document.getElementById('llabel-'+(step-1)).style.color='#111';
+    }
+    if (step < items.length) {
+      const icon = document.getElementById('licon-'+step);
+      icon.innerHTML='<svg class="spin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+      icon.style.border='none'; icon.style.background='none';
+      document.getElementById('llabel-'+step).style.color='#6B7280';
+      step++;
+    } else {
+      clearInterval(iv);
+      setTimeout(() => showScreen('dashboard'), 700);
+    }
+  }, 750);
+}
+
+// ── Curriculum Route Map ──
+function renderRoute() {
+  const container = document.getElementById('route-container');
+  const header = document.getElementById('year-header');
+  if (!container) return;
+  const W = container.offsetWidth, H = container.offsetHeight;
+  if (!W || !H) return;
+
+  // 모드별 배지 텍스트 갱신
+  const badge = document.getElementById('route-mode-badge');
+  if (badge) {
+    badge.textContent = (analysisMode === 'mixed') ? '컴과 + 경영 복수전공' : '선수과목 기반';
+    if (analysisMode === 'mixed') {
+      badge.style.color = '#5B21B6';
+      badge.style.background = '#F5F3FF';
+      badge.style.border = '1px solid #DDD6FE';
+    } else {
+      badge.style.color = '#6B7280';
+      badge.style.background = '#F4F6FA';
+      badge.style.border = '1px solid #E5E7EB';
+    }
+  }
+
+  const colW = W / 4;
+  const nodeW = Math.min(104, colW - 16);
+  const nodeH = 28;
+
+  header.innerHTML = ['1학년','2학년','3학년','4학년'].map(y =>
+    `<div style="text-align:center;font-size:9px;font-weight:700;color:#9CA3AF;letter-spacing:0.06em;">${y}</div>`
+  ).join('');
+
+  // 모드별 로드맵 노드 — cs(기본) / mixed(컴과+경영 복수전공)
+  // m: major 표시용 ('cs' | 'biz')
+  const nodesCS = [
+    {id:'n0', col:0, frac:0.26, label:'프로그래밍입문', s:'done', m:'cs'},
+    {id:'n1', col:0, frac:0.72, label:'컴퓨터의이해',   s:'done', m:'cs'},
+    {id:'n2', col:1, frac:0.09, label:'자료구조',     s:'done', m:'cs'},
+    {id:'n3', col:1, frac:0.36, label:'이산수학',     s:'done', m:'cs'},
+    {id:'n4', col:1, frac:0.62, label:'논리회로',     s:'done', m:'cs'},
+    {id:'n5', col:1, frac:0.87, label:'데이터베이스', s:'soon', m:'cs'},
+    {id:'n6', col:2, frac:0.07, label:'알고리즘',         s:'done', m:'cs'},
+    {id:'n7', col:2, frac:0.33, label:'운영체제',         s:'soon', m:'cs'},
+    {id:'n8', col:2, frac:0.58, label:'컴퓨터네트워크',   s:'warn', m:'cs'},
+    {id:'n9', col:2, frac:0.84, label:'시스템프로그래밍', s:'lock', m:'cs'},
+    {id:'n10', col:3, frac:0.05, label:'소프트웨어공학',   s:'lock', m:'cs'},
+    {id:'n11', col:3, frac:0.26, label:'전산시스템설계',   s:'lock', m:'cs'},
+    {id:'n12', col:3, frac:0.47, label:'컴파일러',         s:'lock', m:'cs'},
+    {id:'n13', col:3, frac:0.68, label:'졸업프로젝트 Ⅰ',  s:'lock', m:'cs'},
+    {id:'n14', col:3, frac:0.90, label:'졸업프로젝트 Ⅱ',  s:'lock', m:'cs'},
+  ];
+
+  // 컴과 + 경영학부 복수전공 — 컴과(파랑) + 경영(보라) 과목이 섞인 로드맵
+  const nodesMixed = [
+    {id:'n0', col:0, frac:0.13, label:'프로그래밍입문', s:'done', m:'cs'},
+    {id:'n1', col:0, frac:0.36, label:'컴퓨터의이해',   s:'done', m:'cs'},
+    {id:'nb0',col:0, frac:0.62, label:'경영학원론',     s:'done', m:'biz'},
+    {id:'nb1',col:0, frac:0.86, label:'회계원리',       s:'done', m:'biz'},
+
+    {id:'n2', col:1, frac:0.08, label:'자료구조',       s:'done', m:'cs'},
+    {id:'n3', col:1, frac:0.27, label:'이산수학',       s:'done', m:'cs'},
+    {id:'nb2',col:1, frac:0.46, label:'마케팅원론',     s:'done', m:'biz'},
+    {id:'n5', col:1, frac:0.65, label:'데이터베이스',   s:'soon', m:'cs'},
+    {id:'nb3',col:1, frac:0.84, label:'재무관리',       s:'soon', m:'biz'},
+
+    {id:'n6', col:2, frac:0.07, label:'알고리즘',           s:'done', m:'cs'},
+    {id:'n7', col:2, frac:0.26, label:'운영체제',           s:'soon', m:'cs'},
+    {id:'nb4',col:2, frac:0.45, label:'경영정보시스템',     s:'warn', m:'biz'},
+    {id:'n8', col:2, frac:0.64, label:'컴퓨터네트워크',     s:'warn', m:'cs'},
+    {id:'nb5',col:2, frac:0.84, label:'비즈니스애널리틱스', s:'warn', m:'biz'},
+
+    {id:'n10',col:3, frac:0.08, label:'소프트웨어공학',     s:'lock', m:'cs'},
+    {id:'nb6',col:3, frac:0.28, label:'전략경영',           s:'lock', m:'biz'},
+    {id:'nb7',col:3, frac:0.48, label:'디지털비즈니스모델', s:'lock', m:'biz'},
+    {id:'n13',col:3, frac:0.70, label:'졸업프로젝트 Ⅰ',     s:'lock', m:'cs'},
+    {id:'n14',col:3, frac:0.90, label:'졸업프로젝트 Ⅱ',     s:'lock', m:'cs'},
+  ];
+
+  const nodes = (analysisMode === 'mixed') ? nodesMixed : nodesCS;
+
+  const posMap = {};
+  nodes.forEach(nd => { posMap[nd.id] = { cx: nd.col*colW + colW/2, cy: nd.frac*H }; });
+  const nodeMap = {};
+  nodes.forEach(nd => nodeMap[nd.id] = nd);
+
+  const edgesCS = [
+    {f:'n0',t:'n2'},{f:'n0',t:'n3'},
+    {f:'n1',t:'n3'},{f:'n1',t:'n4'},
+    {f:'n3',t:'n5'},
+    {f:'n2',t:'n6'},{f:'n4',t:'n7'},{f:'n4',t:'n9'},
+    {f:'n6',t:'n8'},{f:'n7',t:'n8'},
+    {f:'n6',t:'n10'},{f:'n8',t:'n10'},
+    {f:'n5',t:'n11'},{f:'n9',t:'n12'},
+    {f:'n10',t:'n13'},{f:'n13',t:'n14'},
+  ];
+  const edgesMixed = [
+    // CS 라인
+    {f:'n0',t:'n2'},{f:'n0',t:'n3'},
+    {f:'n1',t:'n3'},
+    {f:'n3',t:'n5'},
+    {f:'n2',t:'n6'},
+    {f:'n6',t:'n7'},{f:'n6',t:'n8'},{f:'n7',t:'n8'},
+    {f:'n6',t:'n10'},{f:'n8',t:'n10'},
+    {f:'n10',t:'n13'},{f:'n13',t:'n14'},
+    // 경영 라인
+    {f:'nb0',t:'nb1'},{f:'nb0',t:'nb2'},
+    {f:'nb1',t:'nb3'},
+    {f:'nb2',t:'nb4'},{f:'nb3',t:'nb4'},
+    {f:'nb4',t:'nb5'},
+    {f:'nb4',t:'nb6'},{f:'nb5',t:'nb7'},
+    // 융합 — 컴과 ↔ 경영
+    {f:'n5',t:'nb5'},   // DB → 비즈니스애널리틱스
+    {f:'nb4',t:'n10'},  // 경영정보시스템 → 소프트웨어공학
+    {f:'nb7',t:'n13'},  // 디지털비즈니스모델 → 졸업프로젝트
+  ];
+  const edges = (analysisMode === 'mixed') ? edgesMixed : edgesCS;
+
+  let svgInner = `<defs>
+    <marker id="mh" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,1 L4,2.5 L0,4 Z" fill="#93C5FD"/></marker>
+    <marker id="mg" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,1 L4,2.5 L0,4 Z" fill="#D1D5DB"/></marker>
+    <marker id="mw" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,1 L4,2.5 L0,4 Z" fill="#FCD34D"/></marker>
+    <marker id="ms" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0,1 L4,2.5 L0,4 Z" fill="#93C5FD"/></marker>
+  </defs>`;
+
+  edges.forEach(({f, t}) => {
+    const p1 = posMap[f], p2 = posMap[t];
+    const x1 = p1.cx + nodeW/2, y1 = p1.cy;
+    const x2 = p2.cx - nodeW/2, y2 = p2.cy;
+    const dx = (x2-x1)*0.4;
+    const src = nodeMap[f];
+    let stroke, marker, dash='';
+    if (src.s==='done')      { stroke='#BFDBFE'; marker='mh'; }
+    else if (src.s==='soon') { stroke='#BFDBFE'; marker='ms'; dash='stroke-dasharray="5,3"'; }
+    else if (src.s==='warn') { stroke='#FDE68A'; marker='mw'; dash='stroke-dasharray="5,3"'; }
+    else                     { stroke='#E5E7EB'; marker='mg'; dash='stroke-dasharray="4,3"'; }
+    svgInner += `<path d="M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}" stroke="${stroke}" stroke-width="1.4" fill="none" ${dash} marker-end="url(#${marker})"/>`;
+  });
+
+  let html = `<svg style="position:absolute;inset:0;width:100%;height:100%;overflow:visible;">${svgInner}</svg>`;
+
+  nodes.forEach(nd => {
+    const {cx, cy} = posMap[nd.id];
+    const x = cx - nodeW/2, y = cy - nodeH/2;
+    let bg, border, col, fw='500', leftB='', rEl='';
+    const isBiz = nd.m === 'biz';
+    if (nd.s==='done') {
+      if (isBiz) { bg='#F5F3FF'; border='1px solid #DDD6FE'; col='#5B21B6'; fw='600'; leftB='border-left:2.5px solid #8B5CF6;'; rEl='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>'; }
+      else       { bg='#EFF6FF'; border='1px solid #BFDBFE'; col='#1E40AF'; fw='600'; leftB='border-left:2.5px solid #3B82F6;'; rEl='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>'; }
+    } else if (nd.s==='soon') {
+      if (isBiz) { bg='#fff'; border='1.5px solid #8B5CF6'; col='#5B21B6'; fw='600'; rEl='<span style="font-size:7px;font-weight:700;background:#EDE9FE;color:#5B21B6;padding:1px 4px;border-radius:3px;">예정</span>'; }
+      else       { bg='#fff'; border='1.5px solid #3B82F6'; col='#1E40AF'; fw='600'; rEl='<span style="font-size:7px;font-weight:700;background:#DBEAFE;color:#1E40AF;padding:1px 4px;border-radius:3px;">예정</span>'; }
+    } else if (nd.s==='warn') {
+      bg='#FFFBF0'; border='1.5px solid #F59E0B'; col='#92400E'; fw='600';
+      rEl='<span style="font-size:7px;font-weight:700;background:#FEF3C7;color:#D97706;padding:1px 4px;border-radius:3px;">권장</span>';
+    } else {
+      bg='#F8FAFC'; border='1px solid #E5E7EB'; col='#CBD5E1';
+      rEl='<span style="font-size:9px;opacity:0.5;">🔒</span>';
+    }
+    const lbl = nd.label.length > 7 ? nd.label.slice(0,6)+'…' : nd.label;
+    html += `<div title="${nd.label}" style="position:absolute;left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;width:${nodeW}px;height:${nodeH}px;background:${bg};border:${border};${leftB}border-radius:8px;display:flex;align-items:center;justify-content:space-between;padding:0 7px;gap:3px;cursor:default;">
+      <span style="font-size:10px;font-weight:${fw};color:${col};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;">${lbl}</span>
+      <div style="flex-shrink:0;">${rEl}</div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// ── Timetable ──
+function renderTimetable() {
+  const container = document.getElementById('tt-container');
+  if (!container) return;
+  const W = container.offsetWidth, H = container.offsetHeight;
+  if (!W || !H) return;
+
+  const headerH = 20, timeLabelW = 20;
+  const startH = 9, endH = 18, numH = endH - startH;
+  const cellH = (H - headerH) / numH;
+  const dayW = (W - timeLabelW) / 5;
+
+  // ── 시간표 변형 (선호도) ──
+  // CS 단독 모드 — A: 오전 집중형 / B: 공강일 확보형 / C: 균형 분산형
+  const csVariants = {
+    A: [
+      {day:1,start:9, dur:2,name:'운영체제',     color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:1,start:14,dur:1,name:'이산수학',     color:'#DCFCE7',tc:'#166534',room:'진리관 201'},
+      {day:2,start:9, dur:2,name:'알고리즘',     color:'#EDE9FE',tc:'#5B21B6',room:'공학관 101'},
+      {day:2,start:13,dur:2,name:'데이터베이스', color:'#FEF3C7',tc:'#92400E',room:'진리관 402'},
+      {day:3,start:9, dur:2,name:'운영체제',     color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:3,start:14,dur:1,name:'이산수학',     color:'#DCFCE7',tc:'#166534',room:'진리관 201'},
+      {day:4,start:9, dur:2,name:'알고리즘',     color:'#EDE9FE',tc:'#5B21B6',room:'공학관 101'},
+      {day:5,start:11,dur:1,name:'자료구조',     color:'#FFF7ED',tc:'#C2410C',room:'소프트관 302'},
+      {day:5,start:13,dur:2,name:'데이터베이스', color:'#FEF3C7',tc:'#92400E',room:'진리관 402'},
+    ],
+    B: [ // 금요일 공강 — 월~목에 몰아넣음
+      {day:1,start:10,dur:2,name:'운영체제',     color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:1,start:13,dur:2,name:'알고리즘',     color:'#EDE9FE',tc:'#5B21B6',room:'공학관 101'},
+      {day:2,start:9, dur:2,name:'데이터베이스', color:'#FEF3C7',tc:'#92400E',room:'진리관 402'},
+      {day:2,start:13,dur:1,name:'이산수학',     color:'#DCFCE7',tc:'#166534',room:'진리관 201'},
+      {day:3,start:10,dur:2,name:'운영체제',     color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:3,start:14,dur:2,name:'알고리즘',     color:'#EDE9FE',tc:'#5B21B6',room:'공학관 101'},
+      {day:4,start:9, dur:2,name:'데이터베이스', color:'#FEF3C7',tc:'#92400E',room:'진리관 402'},
+      {day:4,start:13,dur:1,name:'이산수학',     color:'#DCFCE7',tc:'#166534',room:'진리관 201'},
+      {day:4,start:15,dur:2,name:'자료구조',     color:'#FFF7ED',tc:'#C2410C',room:'소프트관 302'},
+    ],
+    C: [ // 5일 균형 분산
+      {day:1,start:11,dur:2,name:'운영체제',     color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:1,start:15,dur:1,name:'자료구조',     color:'#FFF7ED',tc:'#C2410C',room:'소프트관 302'},
+      {day:2,start:10,dur:2,name:'알고리즘',     color:'#EDE9FE',tc:'#5B21B6',room:'공학관 101'},
+      {day:2,start:14,dur:1,name:'이산수학',     color:'#DCFCE7',tc:'#166534',room:'진리관 201'},
+      {day:3,start:13,dur:2,name:'데이터베이스', color:'#FEF3C7',tc:'#92400E',room:'진리관 402'},
+      {day:4,start:10,dur:2,name:'운영체제',     color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:4,start:14,dur:1,name:'이산수학',     color:'#DCFCE7',tc:'#166534',room:'진리관 201'},
+      {day:5,start:10,dur:2,name:'알고리즘',     color:'#EDE9FE',tc:'#5B21B6',room:'공학관 101'},
+      {day:5,start:14,dur:2,name:'데이터베이스', color:'#FEF3C7',tc:'#92400E',room:'진리관 402'},
+    ],
+  };
+
+  // 컴과 + 경영 복수전공 모드 (CS=파랑, 경영=보라/핑크)
+  const mixedVariants = {
+    A: [
+      {day:1,start:9, dur:2,name:'운영체제',         color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:1,start:13,dur:2,name:'마케팅원론',       color:'#FCE7F3',tc:'#9D174D',room:'명신관 305'},
+      {day:2,start:9, dur:2,name:'데이터베이스',     color:'#DBEAFE',tc:'#1E40AF',room:'진리관 402'},
+      {day:2,start:13,dur:2,name:'경영정보시스템',   color:'#EDE9FE',tc:'#5B21B6',room:'명신관 401'},
+      {day:3,start:9, dur:2,name:'운영체제',         color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:3,start:14,dur:1,name:'재무관리',         color:'#FCE7F3',tc:'#9D174D',room:'명신관 207'},
+      {day:4,start:10,dur:2,name:'비즈니스애널리틱스',color:'#EDE9FE',tc:'#5B21B6',room:'명신관 502'},
+      {day:4,start:13,dur:2,name:'데이터베이스',     color:'#DBEAFE',tc:'#1E40AF',room:'진리관 402'},
+      {day:5,start:10,dur:1,name:'경영정보시스템',   color:'#EDE9FE',tc:'#5B21B6',room:'명신관 401'},
+      {day:5,start:13,dur:2,name:'AI·머신러닝개론', color:'#DCFCE7',tc:'#166534',room:'공학관 305'},
+    ],
+    B: [ // 금요일 공강
+      {day:1,start:10,dur:2,name:'운영체제',          color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:1,start:13,dur:2,name:'경영정보시스템',    color:'#EDE9FE',tc:'#5B21B6',room:'명신관 401'},
+      {day:2,start:9, dur:2,name:'데이터베이스',      color:'#DBEAFE',tc:'#1E40AF',room:'진리관 402'},
+      {day:2,start:13,dur:2,name:'마케팅원론',        color:'#FCE7F3',tc:'#9D174D',room:'명신관 305'},
+      {day:2,start:15,dur:1,name:'재무관리',          color:'#FCE7F3',tc:'#9D174D',room:'명신관 207'},
+      {day:3,start:10,dur:2,name:'AI·머신러닝개론',  color:'#DCFCE7',tc:'#166534',room:'공학관 305'},
+      {day:3,start:13,dur:2,name:'운영체제',          color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:4,start:9, dur:2,name:'비즈니스애널리틱스',color:'#EDE9FE',tc:'#5B21B6',room:'명신관 502'},
+      {day:4,start:13,dur:2,name:'데이터베이스',      color:'#DBEAFE',tc:'#1E40AF',room:'진리관 402'},
+    ],
+    C: [ // 5일 균형
+      {day:1,start:11,dur:2,name:'운영체제',          color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:1,start:15,dur:1,name:'재무관리',          color:'#FCE7F3',tc:'#9D174D',room:'명신관 207'},
+      {day:2,start:10,dur:2,name:'데이터베이스',      color:'#DBEAFE',tc:'#1E40AF',room:'진리관 402'},
+      {day:2,start:14,dur:2,name:'마케팅원론',        color:'#FCE7F3',tc:'#9D174D',room:'명신관 305'},
+      {day:3,start:11,dur:2,name:'경영정보시스템',    color:'#EDE9FE',tc:'#5B21B6',room:'명신관 401'},
+      {day:3,start:14,dur:2,name:'AI·머신러닝개론',  color:'#DCFCE7',tc:'#166534',room:'공학관 305'},
+      {day:4,start:10,dur:2,name:'운영체제',          color:'#DBEAFE',tc:'#1E40AF',room:'과학관 201'},
+      {day:4,start:14,dur:2,name:'비즈니스애널리틱스',color:'#EDE9FE',tc:'#5B21B6',room:'명신관 502'},
+      {day:5,start:11,dur:2,name:'데이터베이스',      color:'#DBEAFE',tc:'#1E40AF',room:'진리관 402'},
+    ],
+  };
+
+  const variants = (analysisMode === 'mixed') ? mixedVariants : csVariants;
+  const courses  = variants[timetableVariant] || variants.A;
+
+  const days = ['월','화','수','목','금'];
+  let html = `<div style="position:absolute;inset:0;background:#FAFBFF;border-radius:8px;"></div>`;
+
+  days.forEach((d,i) => {
+    const x = timeLabelW + i*dayW;
+    html += `<div style="position:absolute;top:0;left:${x}px;width:${dayW}px;height:${headerH}px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#9CA3AF;">${d}</div>`;
+  });
+
+  for (let h=0; h<=numH; h++) {
+    const y = headerH + h*cellH;
+    html += `<div style="position:absolute;left:${timeLabelW}px;top:${y}px;right:0;height:1px;background:#EEF2FF;"></div>`;
+    if (h<numH) html += `<div style="position:absolute;left:0;top:${y-4}px;width:${timeLabelW}px;font-size:7.5px;color:#D1D5DB;text-align:right;padding-right:3px;">${startH+h}</div>`;
+  }
+
+  for (let d=1; d<5; d++) {
+    html += `<div style="position:absolute;top:${headerH}px;left:${timeLabelW+d*dayW}px;width:1px;bottom:0;background:#EEF2FF;"></div>`;
+  }
+
+  courses.forEach(c => {
+    const x = timeLabelW+(c.day-1)*dayW+2;
+    const y = headerH+(c.start-startH)*cellH+1;
+    const bh = c.dur*cellH-2, bw = dayW-4;
+    html += `<div style="position:absolute;left:${x}px;top:${y}px;width:${bw}px;height:${bh}px;background:${c.color};border-radius:5px;padding:3px 5px;overflow:hidden;">
+      <div style="font-size:8.5px;font-weight:700;color:${c.tc};line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.name}</div>
+      ${bh>34 ? `<div style="font-size:7.5px;color:${c.tc};opacity:0.6;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.room}</div>` : ''}
+    </div>`;
+  });
+
+  container.innerHTML = html;
+}
+</script>
+</body>
+</html>

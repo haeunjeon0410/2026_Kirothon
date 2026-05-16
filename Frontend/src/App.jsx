@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Roadmap from './pages/Roadmap'
 import Timetable from './pages/Timetable'
 import Curriculum from './pages/Curriculum'
+import Preview from './pages/Preview'
 import { useUser } from './context/UserContext'
 
 /**
@@ -25,6 +26,8 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
+      {/* 시연용 미리보기 (인증 불필요) */}
+      <Route path="/preview" element={<Preview />} />
       <Route
         path="/home"
         element={
