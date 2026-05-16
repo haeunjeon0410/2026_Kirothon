@@ -41,7 +41,17 @@ function Login() {
   const [year, setYear] = useState('2학년')
   const [semester, setSemester] = useState('1학기')
   const [doubleMajor, setDoubleMajor] = useState('')
+  const [doubleMajorSelected, setDoubleMajorSelected] = useState(null)
+  const [doubleMajorSearch, setDoubleMajorSearch] = useState('')
+  const [doubleMajorOpen, setDoubleMajorOpen] = useState(false)
   const [linkedMajor, setLinkedMajor] = useState('')
+  const [linkedMajorSelected, setLinkedMajorSelected] = useState(null)
+  const [linkedMajorSearch, setLinkedMajorSearch] = useState('')
+  const [linkedMajorOpen, setLinkedMajorOpen] = useState(false)
+  const [minor, setMinor] = useState('')
+  const [minorSelected, setMinorSelected] = useState(null)
+  const [minorSearch, setMinorSearch] = useState('')
+  const [minorOpen, setMinorOpen] = useState(false)
   const [career, setCareer] = useState('')
 
   // step 3
@@ -61,6 +71,15 @@ function Login() {
 
   const filteredMajors = MAJORS.filter((m) =>
     m.text.toLowerCase().includes(majorSearch.toLowerCase())
+  )
+  const filteredDoubleMajors = MAJORS.filter((m) =>
+    m.text.toLowerCase().includes(doubleMajorSearch.toLowerCase())
+  )
+  const filteredLinkedMajors = MAJORS.filter((m) =>
+    m.text.toLowerCase().includes(linkedMajorSearch.toLowerCase())
+  )
+  const filteredMinors = MAJORS.filter((m) =>
+    m.text.toLowerCase().includes(minorSearch.toLowerCase())
   )
 
   const toggleMajorType = (type) =>
@@ -427,31 +446,52 @@ function Login() {
               {majorTypes.includes('복수전공') && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-500 w-16 font-medium">복수전공</span>
-                  <select
-                    value={doubleMajor}
-                    onChange={(e) => setDoubleMajor(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 outline-none focus:border-green-600"
+                  <button
+                    type="button"
+                    onClick={() => setDoubleMajorOpen(true)}
+                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 outline-none text-left hover:border-green-500 hover:shadow-sm transition flex items-center justify-between"
                   >
-                    <option value="">전공 선택</option>
-                    <option>경영학부</option>
-                    <option>경제학부</option>
-                    <option>소비자경제학과</option>
-                  </select>
+                    {doubleMajorSelected ? (
+                      <span className="text-gray-800 font-medium">{doubleMajorSelected.text}</span>
+                    ) : (
+                      <span className="text-gray-400">전공 선택</span>
+                    )}
+                    <span className="text-gray-300 text-xs">▼</span>
+                  </button>
                 </div>
               )}
               {majorTypes.includes('연계전공') && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-500 w-16 font-medium">연계전공</span>
-                  <select
-                    value={linkedMajor}
-                    onChange={(e) => setLinkedMajor(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 outline-none focus:border-green-600"
+                  <button
+                    type="button"
+                    onClick={() => setLinkedMajorOpen(true)}
+                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 outline-none text-left hover:border-green-500 hover:shadow-sm transition flex items-center justify-between"
                   >
-                    <option value="">전공 선택</option>
-                    <option>빅데이터사이언스</option>
-                    <option>인공지능</option>
-                    <option>핀테크</option>
-                  </select>
+                    {linkedMajorSelected ? (
+                      <span className="text-gray-800 font-medium">{linkedMajorSelected.text}</span>
+                    ) : (
+                      <span className="text-gray-400">전공 선택</span>
+                    )}
+                    <span className="text-gray-300 text-xs">▼</span>
+                  </button>
+                </div>
+              )}
+              {majorTypes.includes('부전공') && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500 w-16 font-medium">부전공</span>
+                  <button
+                    type="button"
+                    onClick={() => setMinorOpen(true)}
+                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 outline-none text-left hover:border-green-500 hover:shadow-sm transition flex items-center justify-between"
+                  >
+                    {minorSelected ? (
+                      <span className="text-gray-800 font-medium">{minorSelected.text}</span>
+                    ) : (
+                      <span className="text-gray-400">전공 선택</span>
+                    )}
+                    <span className="text-gray-300 text-xs">▼</span>
+                  </button>
                 </div>
               )}
 
@@ -654,6 +694,183 @@ function Login() {
                       setSelectedMajor(m)
                       setMajorOpen(false)
                       setMajorSearch('')
+                    }}
+                  >
+                    {m.text}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 복수전공 선택 모달 */}
+      {doubleMajorOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
+          onClick={() => setDoubleMajorOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl w-[420px] max-h-[80vh] flex flex-col shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-5 border-b border-gray-100">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-bold text-gray-800">복수전공 선택</h3>
+                <button
+                  onClick={() => setDoubleMajorOpen(false)}
+                  className="w-7 h-7 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center hover:bg-gray-200 transition text-sm"
+                >
+                  ✕
+                </button>
+              </div>
+              <input
+                type="text"
+                placeholder="전공명을 검색하세요"
+                value={doubleMajorSearch}
+                onChange={(e) => setDoubleMajorSearch(e.target.value)}
+                autoFocus
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 outline-none focus:border-green-600 focus:bg-white transition"
+              />
+            </div>
+            <div className="flex-1 overflow-y-auto p-2">
+              {filteredDoubleMajors.length === 0 ? (
+                <div className="px-4 py-8 text-center text-sm text-gray-400">
+                  검색 결과가 없습니다
+                </div>
+              ) : (
+                filteredDoubleMajors.map((m) => (
+                  <div
+                    key={m.value}
+                    className={`px-4 py-2.5 rounded-lg text-sm cursor-pointer transition ${
+                      doubleMajorSelected?.value === m.value
+                        ? 'bg-green-50 text-green-700 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => {
+                      setDoubleMajorSelected(m)
+                      setDoubleMajor(m.text)
+                      setDoubleMajorOpen(false)
+                      setDoubleMajorSearch('')
+                    }}
+                  >
+                    {m.text}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 연계전공 선택 모달 */}
+      {linkedMajorOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
+          onClick={() => setLinkedMajorOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl w-[420px] max-h-[80vh] flex flex-col shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-5 border-b border-gray-100">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-bold text-gray-800">연계전공 선택</h3>
+                <button
+                  onClick={() => setLinkedMajorOpen(false)}
+                  className="w-7 h-7 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center hover:bg-gray-200 transition text-sm"
+                >
+                  ✕
+                </button>
+              </div>
+              <input
+                type="text"
+                placeholder="전공명을 검색하세요"
+                value={linkedMajorSearch}
+                onChange={(e) => setLinkedMajorSearch(e.target.value)}
+                autoFocus
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 outline-none focus:border-green-600 focus:bg-white transition"
+              />
+            </div>
+            <div className="flex-1 overflow-y-auto p-2">
+              {filteredLinkedMajors.length === 0 ? (
+                <div className="px-4 py-8 text-center text-sm text-gray-400">
+                  검색 결과가 없습니다
+                </div>
+              ) : (
+                filteredLinkedMajors.map((m) => (
+                  <div
+                    key={m.value}
+                    className={`px-4 py-2.5 rounded-lg text-sm cursor-pointer transition ${
+                      linkedMajorSelected?.value === m.value
+                        ? 'bg-green-50 text-green-700 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => {
+                      setLinkedMajorSelected(m)
+                      setLinkedMajor(m.text)
+                      setLinkedMajorOpen(false)
+                      setLinkedMajorSearch('')
+                    }}
+                  >
+                    {m.text}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 부전공 선택 모달 */}
+      {minorOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center"
+          onClick={() => setMinorOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl w-[420px] max-h-[80vh] flex flex-col shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-5 border-b border-gray-100">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-base font-bold text-gray-800">부전공 선택</h3>
+                <button
+                  onClick={() => setMinorOpen(false)}
+                  className="w-7 h-7 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center hover:bg-gray-200 transition text-sm"
+                >
+                  ✕
+                </button>
+              </div>
+              <input
+                type="text"
+                placeholder="전공명을 검색하세요"
+                value={minorSearch}
+                onChange={(e) => setMinorSearch(e.target.value)}
+                autoFocus
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 outline-none focus:border-green-600 focus:bg-white transition"
+              />
+            </div>
+            <div className="flex-1 overflow-y-auto p-2">
+              {filteredMinors.length === 0 ? (
+                <div className="px-4 py-8 text-center text-sm text-gray-400">
+                  검색 결과가 없습니다
+                </div>
+              ) : (
+                filteredMinors.map((m) => (
+                  <div
+                    key={m.value}
+                    className={`px-4 py-2.5 rounded-lg text-sm cursor-pointer transition ${
+                      minorSelected?.value === m.value
+                        ? 'bg-green-50 text-green-700 font-semibold'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => {
+                      setMinorSelected(m)
+                      setMinor(m.text)
+                      setMinorOpen(false)
+                      setMinorSearch('')
                     }}
                   >
                     {m.text}
